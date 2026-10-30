@@ -1,0 +1,48 @@
+{% extends 'base.html' %}{% block title %}{{ incident.id }}{% endblock %}{% block crumb %}<a
+    href="{{ url_for('incidents') }}">Incidents</a> / {{ incident.id }}{% endblock %}{% block content %}<section
+    class="page-heading">
+    <div>
+        <div class="eyebrow">INCIDENT CASE FILE / {{ incident.id }}</div>
+        <h1>{{ incident.subject }}</h1>
+        <p class="subheading">Reported sender: <strong>{{ incident.sender }}</strong></p>
+    </div><a class="button secondary" href="{{ url_for('incidents') }}">← Back to incidents</a>
+</section>
+<section class="detail-grid">
+    <article class="panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Investigation summary</h2>
+                <p>Findings from the simulated agent workflow</p>
+            </div><span class="severity {{ incident.severity|lower }}"><i></i>{{ incident.severity }}</span>
+        </div>
+        <div class="detail-status"><span class="status">{{ incident.status }}</span><span class="muted">Created {{
+                incident.created_at }}</span></div>
+        <h3 class="subsection-title">Key findings</h3>
+        <p class="finding-copy">{{ incident.findings }}</p>
+        <div class="notice"><span>ⓘ</span>
+            <div><strong>Analyst guidance</strong>
+                <p>Verify findings against trusted mail headers and approved security tools before taking action. This
+                    page uses demonstration data.</p>
+            </div>
+        </div>
+        <h3 class="subsection-title">Recommended next steps</h3>
+        <ul class="check-list">
+            <li>Validate sender domain and reply-to address.</li>
+            <li>Inspect URLs and attachments in a controlled environment.</li>
+            <li>Request human approval before containment or user-impacting action.</li>
+        </ul>
+    </article>
+    <article class="panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Case activity</h2>
+                <p>Recorded events for this incident</p>
+            </div>
+        </div>
+        <div class="activity-list">{% for a in related %}<div class="activity-item">
+                <div class="activity-dot"></div>
+                <div><strong>{{ a.event }}</strong><small>{{ a.actor }} · {{ a.created_at }}</small></div>
+            </div>{% else %}<p class="muted">No case-specific events recorded yet.</p>{% endfor %}</div><a
+            class="button primary full" href="{{ url_for('approvals') }}">Open approval queue →</a>
+    </article>
+</section>{% endblock %}

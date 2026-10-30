@@ -1,0 +1,138 @@
+{% extends 'base.html' %}{% block title %}Overview{% endblock %}{% block content %}<section class="welcome-row">
+    <div>
+        <div class="eyebrow"><span class="pulse"></span> SECURITY OPERATIONS CENTER <span class="slash">/</span> LIVE
+            OVERVIEW</div>
+        <h1>Good morning, Analyst <span class="wave">✦</span></h1>
+        <p class="subheading">Your AI investigation team is monitoring the threat landscape.</p>
+    </div>
+    <div class="welcome-actions"><a class="button secondary" href="{{ url_for('export_csv') }}">⇩ Export report</a><a
+            class="button primary" href="{{ url_for('incidents') }}">＋ View incidents</a></div>
+</section>
+<section class="metrics">
+    <article class="metric-card">
+        <div class="metric-top"><span>Total incidents</span><span class="metric-icon blue">◎</span></div>
+        <div class="metric-value">{{ incidents|length + 0 if incidents|length < 0 else 4 }}<span
+                class="metric-note positive">↗ Demo data</span></div>
+        <div class="metric-foot"><span
+                class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>Incidents tracked in
+            workspace</div>
+    </article>
+    <article class="metric-card">
+        <div class="metric-top"><span>Active investigations</span><span class="metric-icon purple">⌕</span></div>
+        <div class="metric-value">{{ active }} <span class="metric-note">currently active</span></div>
+        <div class="metric-foot"><span class="tiny-dot purple-dot"></span> Triage and investigation in progress</div>
+    </article>
+    <article class="metric-card">
+        <div class="metric-top"><span>Awaiting approval</span><span class="metric-icon amber">◈</span></div>
+        <div class="metric-value">{{ pending_count }} <span class="metric-note">need review</span></div>
+        <div class="metric-foot"><span class="tiny-dot amber-dot"></span> Human decision required</div>
+    </article>
+    <article class="metric-card">
+        <div class="metric-top"><span>AI agents online</span><span class="metric-icon green">⌘</span></div>
+        <div class="metric-value">{{ agent_count }}<span class="metric-note positive">● Demo ready</span></div>
+        <div class="metric-foot"><span class="tiny-dot green-dot"></span> Multi-agent workflow status</div>
+    </article>
+</section>
+<section class="content-grid">
+    <article class="panel incident-panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Recent incidents</h2>
+                <p>Latest signals requiring security attention</p>
+            </div><a class="text-link" href="{{ url_for('incidents') }}">View all incidents →</a>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>INCIDENT</th>
+                        <th>SUBJECT</th>
+                        <th>SEVERITY</th>
+                        <th>STATUS</th>
+                        <th>TIME</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>{% for i in incidents %}<tr>
+                        <td><a class="id-link" href="{{ url_for('incident_detail',incident_id=i.id) }}">{{ i.id }}</a>
+                        </td>
+                        <td>
+                            <div class="subject-cell">{{ i.subject }}</div><small class="muted">{{ i.sender }}</small>
+                        </td>
+                        <td><span class="severity {{ i.severity|lower }}"><i></i>{{ i.severity }}</span></td>
+                        <td><span class="status">{{ i.status }}</span></td>
+                        <td class="muted">{{ i.created_at[11:] }}</td>
+                        <td><a class="row-arrow" href="{{ url_for('incident_detail',incident_id=i.id) }}">↗</a></td>
+                    </tr>{% endfor %}</tbody>
+            </table>
+        </div>
+    </article>
+    <article class="panel agents-panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Agent orchestration</h2>
+                <p>Multi-agent investigation pipeline</p>
+            </div><span class="live-tag"><i></i> LIVE</span>
+        </div>
+        <div class="pipeline">
+            <div class="pipeline-step">
+                <div class="pipeline-icon blue">⌕</div>
+                <div class="pipeline-text"><strong>Triage Agent</strong><small>Classify & prioritize</small></div><span
+                    class="step-check">✓</span>
+            </div>
+            <div class="pipeline-line"></div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon purple">⌘</div>
+                <div class="pipeline-text"><strong>Investigation Agent</strong><small>Analyze indicators</small></div>
+                <span class="step-check">✓</span>
+            </div>
+            <div class="pipeline-line"></div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon amber">◇</div>
+                <div class="pipeline-text"><strong>Risk Reviewer</strong><small>Validate confidence</small></div><span
+                    class="step-check">✓</span>
+            </div>
+            <div class="pipeline-line"></div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon green">↗</div>
+                <div class="pipeline-text"><strong>Response Agent</strong><small>Propose safe action</small></div><span
+                    class="step-wait">•••</span>
+            </div>
+        </div><a class="button full secondary" href="{{ url_for('agents') }}">Explore agent activity →</a>
+    </article>
+</section>
+<section class="content-grid lower-grid">
+    <article class="panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Recent activity</h2>
+                <p>Traceable events across the workflow</p>
+            </div><a class="text-link" href="{{ url_for('audit') }}">Full audit trail →</a>
+        </div>
+        <div class="activity-list">{% for a in audits %}<div class="activity-item">
+                <div class="activity-dot"></div>
+                <div><strong>{{ a.event }}</strong><small>{{ a.actor }} · {{ a.created_at }} · {{ a.incident_id
+                        }}</small></div>
+            </div>{% endfor %}</div>
+    </article>
+    <article class="panel response-panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Response governance</h2>
+                <p>Safety checks before action</p>
+            </div><span class="metric-icon green">✓</span>
+        </div>
+        <div class="governance-row"><span class="governance-check">✓</span>
+            <div><strong>Human approval gate</strong><small>Enabled for containment actions</small></div><span
+                class="enabled">ENABLED</span>
+        </div>
+        <div class="governance-row"><span class="governance-check">✓</span>
+            <div><strong>Audit logging</strong><small>Actions recorded for review</small></div><span
+                class="enabled">ENABLED</span>
+        </div>
+        <div class="governance-row"><span class="governance-check">✓</span>
+            <div><strong>Least-action principle</strong><small>Suggested actions, not automatic execution</small></div>
+            <span class="enabled">ENABLED</span>
+        </div>
+    </article>
+</section>{% endblock %}

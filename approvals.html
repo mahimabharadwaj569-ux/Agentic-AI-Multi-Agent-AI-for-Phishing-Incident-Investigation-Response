@@ -1,0 +1,54 @@
+{% extends 'base.html' %}{% block title %}Approval Queue{% endblock %}{% block crumb %}Approval queue{% endblock %}{%
+block content %}<section class="page-heading">
+    <div>
+        <div class="eyebrow">RESPONSE GOVERNANCE / HUMAN-IN-THE-LOOP</div>
+        <h1>Approval queue</h1>
+        <p class="subheading">Review proposed response actions before they are marked as approved.</p>
+    </div><span class="approval-counter">{{ pending_count }} PENDING REVIEW</span>
+</section>
+<div class="notice wide-notice"><span>♧</span>
+    <div><strong>Human oversight is enabled</strong>
+        <p>Approving a demo action updates the local incident status only. It does not quarantine mail or change any
+            external system.</p>
+    </div>
+</div>
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <h2>Response requests</h2>
+            <p>Pending requests are listed first</p>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>INCIDENT</th>
+                    <th>PROPOSED ACTION</th>
+                    <th>RATIONALE</th>
+                    <th>STATUS</th>
+                    <th>DECISION</th>
+                </tr>
+            </thead>
+            <tbody>{% for a in approvals %}<tr>
+                    <td><a class="id-link" href="{{ url_for('incident_detail',incident_id=a.incident_id) }}">{{
+                            a.incident_id }}</a><small class="muted block">{{ a.created_at }}</small></td>
+                    <td><strong>{{ a.action }}</strong></td>
+                    <td class="rationale">{{ a.rationale }}</td>
+                    <td><span class="approval-state {{ a.status|lower }}">{{ a.status }}</span></td>
+                    <td>{% if a.status=='Pending' %}<div class="decision-actions">
+                            <form method="post"
+                                action="{{ url_for('approval_action',approval_id=a.id,decision='approve') }}"><button
+                                    class="button approve" type="submit" data-confirm="Approve this demo action?">✓
+                                    Approve</button></form>
+                            <form method="post"
+                                action="{{ url_for('approval_action',approval_id=a.id,decision='reject') }}"><button
+                                    class="button reject" type="submit" data-confirm="Reject this demo action?">✕
+                                    Reject</button></form>
+                        </div>{% else %}<span class="muted">Decision recorded</span>{% endif %}</td>
+                </tr>{% else %}<tr>
+                    <td colspan="5" class="empty">No approval requests yet.</td>
+                </tr>{% endfor %}</tbody>
+        </table>
+    </div>
+</section>{% endblock %}

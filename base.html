@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{% block title %}SentinelAI{% endblock %} · SentinelAI</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+    <script defer src="{{ url_for('static',filename='js/app.js') }}"></script>
+</head>
+
+<body>
+    <aside class="sidebar"><a class="brand" href="{{ url_for('dashboard') }}"><span
+                class="brand-icon">✦</span><span>sentinel<span class="brand-ai">AI</span><small>THREAT RESPONSE
+                    CENTER</small></span></a>
+        <div class="workspace"><span class="live-dot"></span> SOC WORKSPACE <span class="chevron">⌄</span></div>
+        <div class="nav-label">WORKSPACE</div>
+        <nav><a class="nav-item {% if request.endpoint=='dashboard' %}active{% endif %}"
+                href="{{ url_for('dashboard') }}"><span>▦</span> Overview</a><a
+                class="nav-item {% if request.endpoint in ['incidents','incident_detail'] %}active{% endif %}"
+                href="{{ url_for('incidents') }}"><span>◎</span> Incidents <b class="nav-count">4</b></a><a
+                class="nav-item {% if request.endpoint=='agents' %}active{% endif %}"
+                href="{{ url_for('agents') }}"><span>⌘</span> Agent activity</a><a
+                class="nav-item {% if request.endpoint=='approvals' %}active{% endif %}"
+                href="{{ url_for('approvals') }}"><span>◈</span> Approval queue {% if pending_count %}<b
+                    class="nav-count alert-count">{{ pending_count }}</b>{% endif %}</a><a
+                class="nav-item {% if request.endpoint=='audit' %}active{% endif %}"
+                href="{{ url_for('audit') }}"><span>≋</span> Audit trail</a></nav>
+        <div class="sidebar-bottom">
+            <div class="secure-card">
+                <div class="secure-icon">♧</div><strong>Human-in-the-loop</strong>
+                <p>High-impact actions require analyst approval.</p><span class="secure-status"><i></i> Policy
+                    enforcement on</span>
+            </div>
+            <div class="user-row">
+                <div class="avatar">SA</div>
+                <div><strong>Security Analyst</strong><small>Demo workspace</small></div><span class="dots">•••</span>
+            </div>
+        </div>
+    </aside>
+    <main class="main">
+        <header class="topbar">
+            <div class="crumb">Security Operations <span>/</span> <strong>{% block crumb %}Overview{% endblock
+                    %}</strong></div>
+            <div class="top-actions"><span class="env-pill"><i></i> DEMO ENVIRONMENT</span><button class="icon-button"
+                    title="Notifications">♧<em></em></button>
+                <div class="top-avatar">SA</div>
+            </div>
+        </header>
+        <div class="page-wrap">{% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}{% for
+            category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endif
+            %}{% endwith %}{% block content %}{% endblock %}<footer>SentinelAI <span>•</span> Defensive security
+                workflow demo <span class="footer-right">SYSTEM STATUS: <b>OPERATIONAL</b></span></footer>
+        </div>
+    </main>
+</body>
+
+</html>

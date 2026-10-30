@@ -1,0 +1,49 @@
+{% extends 'base.html' %}{% block title %}Incidents{% endblock %}{% block crumb %}Incidents{% endblock %}{% block
+content %}<section class="page-heading">
+    <div>
+        <div class="eyebrow">THREAT MANAGEMENT / CASE REGISTER</div>
+        <h1>Incident management</h1>
+        <p class="subheading">Search, filter and review suspicious-message investigations.</p>
+    </div><a class="button secondary" href="{{ url_for('export_csv') }}">⇩ Export CSV</a>
+</section>
+<section class="panel">
+    <form class="filters">
+        <div class="searchbox"><span>⌕</span><input name="q" value="{{ q }}"
+                placeholder="Search incident, subject or sender…"></div><select name="severity">
+            <option value="">All severities</option>{% for s in ['Critical','High','Medium','Low'] %}<option {% if
+                severity==s %}selected{% endif %}>{{ s }}</option>{% endfor %}
+        </select><select name="status">
+            <option value="">All statuses</option>{% for s in ['Under Investigation','Awaiting
+            Approval','Contained','Resolved'] %}<option {% if status==s %}selected{% endif %}>{{ s }}</option>{% endfor
+            %}
+        </select><button class="button primary" type="submit">Apply filters</button><a class="button secondary"
+            href="{{ url_for('incidents') }}">Reset</a>
+    </form>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>INCIDENT</th>
+                    <th>SUBJECT / SENDER</th>
+                    <th>SEVERITY</th>
+                    <th>STATUS</th>
+                    <th>CREATED</th>
+                    <th>OPEN</th>
+                </tr>
+            </thead>
+            <tbody>{% for i in incidents %}<tr>
+                    <td><a class="id-link" href="{{ url_for('incident_detail',incident_id=i.id) }}">{{ i.id }}</a></td>
+                    <td>
+                        <div class="subject-cell">{{ i.subject }}</div><small class="muted">{{ i.sender }}</small>
+                    </td>
+                    <td><span class="severity {{ i.severity|lower }}"><i></i>{{ i.severity }}</span></td>
+                    <td><span class="status">{{ i.status }}</span></td>
+                    <td class="muted">{{ i.created_at }}</td>
+                    <td><a class="row-arrow" href="{{ url_for('incident_detail',incident_id=i.id) }}">↗</a></td>
+                </tr>{% else %}<tr>
+                    <td colspan="6" class="empty">No incidents match these filters.</td>
+                </tr>{% endfor %}</tbody>
+        </table>
+    </div>
+    <div class="table-foot">Showing {{ incidents|length }} incident(s) <span>Sample workspace data</span></div>
+</section>{% endblock %}

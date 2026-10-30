@@ -1,0 +1,40 @@
+{% extends 'base.html' %}{% block title %}Audit Trail{% endblock %}{% block crumb %}Audit trail{% endblock %}{% block
+content %}<section class="page-heading">
+    <div>
+        <div class="eyebrow">GOVERNANCE / EVENT HISTORY</div>
+        <h1>Audit trail</h1>
+        <p class="subheading">A chronological record of actions and workflow events in this demo.</p>
+    </div><span class="env-pill">▤ {{ entries|length }} EVENTS</span>
+</section>
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <h2>Recorded events</h2>
+            <p>Newest events appear first</p>
+        </div><a class="button secondary" href="{{ url_for('export_csv') }}">⇩ Export incidents</a>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>TIME</th>
+                    <th>ACTOR</th>
+                    <th>EVENT</th>
+                    <th>INCIDENT</th>
+                    <th>RECORD</th>
+                </tr>
+            </thead>
+            <tbody>{% for e in entries %}<tr>
+                    <td class="muted">{{ e.created_at }}</td>
+                    <td><span class="actor-pill">{{ e.actor }}</span></td>
+                    <td>{{ e.event }}</td>
+                    <td><a class="id-link" href="{{ url_for('incident_detail',incident_id=e.incident_id) }}">{{
+                            e.incident_id }}</a></td>
+                    <td><span class="audit-check">✓ logged</span></td>
+                </tr>{% else %}<tr>
+                    <td colspan="5" class="empty">No events recorded.</td>
+                </tr>{% endfor %}</tbody>
+        </table>
+    </div>
+    <div class="table-foot">Audit events are stored locally in SQLite. <span>Demo environment</span></div>
+</section>{% endblock %}
